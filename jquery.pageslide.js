@@ -56,7 +56,7 @@
     }
     
     // Function that controls opening of the pageslide
-    function _start( direction, speed ) {
+    function _start( direction, speed, callback ) {
         var slideWidth = $pageslide.outerWidth( true ),
             bodyAnimateIn = {},
             slideAnimateIn = {};
@@ -83,13 +83,14 @@
         $pageslide.show()
                   .animate(slideAnimateIn, speed, function() {
                       _sliding = false;
+                      if( typeof callback != 'undefined' ) callback();
                   });
     }
       
     /*
      * Declaration 
      */
-    $.fn.pageslide = function(options) {
+    $.fn.pageslide = function(options, callback) {
         var $elements = this;
         
         // On click
@@ -106,7 +107,7 @@
                 $.pageslide.close();
             } else {                 
                 // Open
-                $.pageslide( settings );
+                $.pageslide( settings, callback );
 
                 // Record the last element to trigger pageslide
                 _lastCaller = $self[0];
@@ -138,12 +139,12 @@
         if( $pageslide.is(':visible') && $pageslide.data( 'direction' ) != settings.direction) {
             $.pageslide.close(function(){
                 _load( settings.href, settings.iframe );
-                _start( settings.direction, settings.speed );
+                _start( settings.direction, settings.speed, callback );
             });
         } else {                
             _load( settings.href, settings.iframe );
             if( $pageslide.is(':hidden') ) {
-                _start( settings.direction, settings.speed );
+                _start( settings.direction, settings.speed, callback );
             }
         }
         
