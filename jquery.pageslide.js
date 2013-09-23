@@ -132,23 +132,16 @@
 	
 	// Open the pageslide
 	$.pageslide = function( options ) {	    
-	    // Extend the settings with those the user has provided
-        var settings = $.extend({}, $.fn.pageslide.defaults, options);
-	    
-	    // Are we trying to open in different direction?
-        if( $pageslide.is(':visible') && $pageslide.data( 'direction' ) != settings.direction) {
-            $.pageslide.close(function(){
-                _load( settings.href, settings.iframe );
-                _start( settings.direction, settings.speed, callback );
-            });
-        } else {                
-            _load( settings.href, settings.iframe );
-            if( $pageslide.is(':hidden') ) {
-                _start( settings.direction, settings.speed, callback );
-            }
-        }
-        
-        $pageslide.data( settings );
+		// Extend the settings with those the user has provided
+	        var settings = $.extend({}, $.fn.pageslide.defaults, options);
+		    
+		// Re-open page slide in ANY case (visual feedback for user)
+	        $.pageslide.close(function(){
+	            _load( settings.href, settings.iframe );
+	            _start( settings.direction, settings.speed, callback );
+	        });
+	
+	        $pageslide.data( settings );
 	}
 	
 	// Close the pageslide
@@ -160,7 +153,10 @@
             slideAnimateIn = {}
             	        
         // If the slide isn't open, just ignore the call
-        if( $pageslide.is(':hidden') || _sliding ) return;	        
+        if( $pageslide.is(':hidden') || _sliding ){
+        	if( typeof callback != 'undefined' ) callback();
+        	return;	        
+        }
         _sliding = true;
         
         switch( $pageslide.data( 'direction' ) ) {
